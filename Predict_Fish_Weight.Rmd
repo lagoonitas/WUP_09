@@ -72,7 +72,7 @@ basicNN + geom_point() + geom_smooth(method=lm)
 
 
 
-     
+     Both graphs show that as length1 increases weight follows and increases as well. It looks like a straight line is not a great fit because most of the points don't fall evenly around the blue line.
 
 
 ### Numerical Descriptive Results
@@ -95,6 +95,9 @@ library(car)
 subsets(regsubsets.out,statistic="adjr2",legend="bottomright",main="Adjusted R^2")
 ```
 
+The graph shows that the Y axis is adjusted R squared, and the X axis is the number of variables used in a linear fit. The graph shows that the best fit comes from using the two variables height and width;subset 2 is the best fit.
+
+
 ```{r}
 which.max(summary.out$adjr2)
 ```
@@ -102,11 +105,18 @@ which.max(summary.out$adjr2)
 summary.out$which[2,]
 ```
 
+the summary shows which two variables are best, which is Height and Width.
+
+
 ```{r}
 best.model <- lm(Weight~Height+Width,data=Perch)
 summary(best.model)
 fullup=lm(Weight~.,data= select (Perch, -Species))
 ```
+
+We made a linear model based on height and width;it shows that the best prediction for weight=-536 + 74.77 * Height +69.62 *width.
+
+This equation is the best fit for predicting the weight of the perch using the two variables ,width and Height.
 
 
 ## Inferential Results
@@ -121,11 +131,14 @@ $H_A$:there is a difference between models 1 and 2 when predicting the Weight of
 anova(fullup,best.model)
 ```
 
+This analysis of Variance table basically shows that model 1 is slightly better beacuse it has a smaller Residual sum of squares.
+
+
 # Discussion and Conclusion
 
 <!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
 
- We fail to reject the Null hypothesis beacuse the P value is high at 0.879.
+ We fail to reject the Null hypothesis because the P value is high at 0.879. We conclude that Height and Width are the two best variables when predicting weight if using just two variables.
 
  
  
