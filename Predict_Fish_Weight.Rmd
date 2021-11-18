@@ -31,7 +31,7 @@ fish=read.csv("Fish.csv")
 
 <!--Decide on your methods:  use "variable analysis" or other appropriate descriptors.  Make sure to choose at least one graphical method and at least one numerical method.!-->
 
-obtains subset of fish with the species we want to analyze ,than we will look at how well each combination of the predictor variables  can predict the weight of the fish. We are using the perch subset in this analysis.
+obtain subset of fish with the species we want to analyze ,than we will look at how well each combination of the predictor variables can predict the weight of the fish. We are using the perch subset in this analysis.
 
 ```{r}
 Perch =filter(fish,Species=="Perch")
@@ -141,68 +141,236 @@ This analysis of Variance table basically shows that model 1 is slightly better 
  We fail to reject the Null hypothesis because the P value is high at 0.879. We conclude that Height and Width are the two best variables when predicting weight if using just two variables.
 
  
+ ##
  
-## Build the best regression model you can that predicts the weight of perch
-## Using only two predictor variables  
-
-
-# Methods
+ # Methods
 
 <!--Decide on your methods:  use "variable analysis" or other appropriate descriptors.  Make sure to choose at least one graphical method and at least one numerical method.!-->
 
-#Results
+obtains subset of fish with the species we want to analyze ,than we will look at how well each combination of the predictor variables  can predict the weight of the fish. We are using the perch subset in this analysis.
+
+```{r}
+Roach =filter(fish,Species=="Roach")
+```
+
+
+# Results
 
 <!--Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.!-->
 
 ## Descriptive Results
 
+
+
 ### Graphical Descriptive Results
 
 <!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question!-->
 
+
+
+
+
+```{r}
+basicNN <- ggplot(Roach,aes(y=Weight,x=Length1))
+```
+## Now add in scatterplot
+
+```{r}
+basicNN + geom_point()
+```
+  
+  
+  The scatterplot shows that as the weight of Roach goes up,it length also goes up.  This means that weight is a good determining factor for length1,and vice versa,length1 is a good determining factor for predicting weight.
+  
+```{r}
+basicNN + geom_point() + geom_smooth(method=lm)
+``` 
+
+
+
+     Both graphs show that as length1 increases weight follows and increases as well. It looks like a straight line is not a great fit because most of the points don't fall evenly around the blue line.
+
+
 ### Numerical Descriptive Results
 
 <!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
+
+```{r}
+library(leaps)
+regsubsets.out <-
+    regsubsets(Weight ~ .,
+               data = select (Roach,-Species),
+               nbest = 1,       # 1 best model for each number of predictors
+               nvmax = NULL,    # NULL for no limit on number of variables
+               force.in = NULL, force.out = NULL,
+               method = "exhaustive")
+
+summary.out <- summary(regsubsets.out)
+as.data.frame(summary.out$outmat)
+library(car)
+subsets(regsubsets.out,statistic="adjr2",legend="bottomright",main="Adjusted R^2")
+```
+
+The graph shows that the Y axis is adjusted R squared, and the X axis is the number of variables used in a linear fit. The graph shows that the best fit comes from using the two variables height and width;subset 2 is the best fit.
+
+
+```{r}
+which.max(summary.out$adjr2)
+```
+```{r}
+summary.out$which[2,]
+```
+
+the summary shows which two variables are best, which is Length3 and Width.
+
+
+```{r}
+best.model <- lm(Weight~Width+Length3,data=Roach)
+summary(best.model)
+fullup=lm(Weight~.,data= select (Roach, -Species))
+```
+
+We made a linear model based on height and width;it shows that the best prediction for weight=-319.118 + 8.278 * Length3 +72.30 *Width.
+
+This equation is the best fit for predicting the weight of the perch using the two variables ,width and Length3.
+
 
 ## Inferential Results
 
 <!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
 
 
+$H_0$:there is no difference between models 1 and 2 when predicting the Weight of the fish (Roach)
+
+$H_A$:there is a difference between models 1 and 2 when predicting the Weight of the fish (Roach)
+```{r}
+anova(fullup,best.model)
+```
+
+This analysis of Variance table basically shows that model 1 is slightly better beacuse it has a smaller Residual sum of squares.
+
+
 # Discussion and Conclusion
 
 <!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
 
+ We fail to reject the Null hypothesis because the P value is high at 0.9338 . We conclude that Length3 and Width are the two best variables when predicting weight of a Roach if using just two variables.
 
-## Build the best regression model you can that predicts the weight of perch
-## Using only two predictor variables  
 
+## Pike
 
 # Methods
 
 <!--Decide on your methods:  use "variable analysis" or other appropriate descriptors.  Make sure to choose at least one graphical method and at least one numerical method.!-->
 
-#Results
+obtains subset of fish with the species we want to analyze ,than we will look at how well each combination of the predictor variables  can predict the weight of the fish. We are using the Pike subset in this analysis.
+
+```{r}
+Pike =filter(fish,Species=="Pike")
+```
+
+
+# Results
 
 <!--Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.!-->
 
 ## Descriptive Results
 
+
+
 ### Graphical Descriptive Results
 
 <!--Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question!-->
 
+
+
+
+
+```{r}
+basicNN <- ggplot(Pike,aes(y=Weight,x=Length1))
+```
+## Now add in scatterplot
+
+```{r}
+basicNN + geom_point()
+```
+  
+  
+  
+  
+```{r}
+basicNN + geom_point() + geom_smooth(method=lm)
+``` 
+
+
+
+     Both graphs show that as length1 increases weight follows and increases as well. It looks like a straight line is not a great fit because most of the points don't fall evenly around the blue line.
+
+
 ### Numerical Descriptive Results
 
 <!--Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question!-->
+
+```{r}
+library(leaps)
+regsubsets.out <-
+    regsubsets(Weight ~ .,
+               data = select (Pike,-Species),
+               nbest = 1,       # 1 best model for each number of predictors
+               nvmax = NULL,    # NULL for no limit on number of variables
+               force.in = NULL, force.out = NULL,
+               method = "exhaustive")
+
+summary.out <- summary(regsubsets.out)
+as.data.frame(summary.out$outmat)
+library(car)
+subsets(regsubsets.out,statistic="adjr2",legend="bottomright",main="Adjusted R^2")
+```
+
+The graph shows that the Y axis is adjusted R squared, and the X axis is the number of variables used in a linear fit. The graph shows that the best fit comes from using the two variables height and width;subset 2 is the best fit.
+
+
+```{r}
+which.max(summary.out$adjr2)
+```
+```{r}
+summary.out$which[2,]
+```
+
+the summary shows which two variables are best, which is Length3 and Width.
+
+
+```{r}
+best.model <- lm(Weight~Length3+Width,data=Pike)
+summary(best.model)
+fullup=lm(Weight~.,data= select (Pike, -Species))
+```
+
+We made a linear model based on height and width;it shows that the best prediction for weight=-1599.742 + 48.77 * Length3 + (-69.62) *width.
+
+This equation is the best fit for predicting the weight of the Pike using the two variables ,width and Length.
+
 
 ## Inferential Results
 
 <!--State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question!-->
 
 
+$H_0$:there is no difference between models 1 and 2 when predicting the Weight of the fish (Pike)
+
+$H_A$:there is a difference between models 1 and 2 when predicting the Weight of the fish (Pike)
+```{r}
+anova(fullup,best.model)
+```
+
+This analysis of Variance table basically shows that model 1 is slightly better because it has a smaller Residual sum of squares.
+
+
 # Discussion and Conclusion
 
-<!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
+<!--Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhaps are related for some other reason.  Watch the chapter 6 videos from the GeorgeTown videos collection.!-->
 
+ We fail to reject the Null hypothesis because the P value is high at 0.879. We conclude that Length3 and Width are the two best variables when predicting weight of a Pike if using just two variables.
 
+ 
+ 
